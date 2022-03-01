@@ -1,13 +1,15 @@
 {
-  "name": "helllo_react_jsx",
-  "version": "1.0.0",
+  "name": "xd-react-plugin",
+  "version": "0.0.1",
+  "description": "Experimental scenegraph reconciler for Adobe XD",
   "main": "main.js",
   "scripts": {
     "watch": "nodemon -w src -e js,jsx,css -w webpack.config.js -x yarn build",
     "build": "webpack --mode development"
   },
-  "license": "none",
-  "private": true,
+  "repository": "https://github.com/intouchg/xd-react-plugin",
+  "author": "Intouch Group",
+  "license": "MIT",
   "devDependencies": {
     "nodemon": "^1.18.7",
     "webpack": "^4.16.4",
