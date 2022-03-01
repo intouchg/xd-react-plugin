@@ -1,69 +1,9 @@
 const React = require('react')
 const commands = require('commands')
-const { Rectangle, Color, Path } = require('scenegraph')
+const { Rectangle, Color, Path, Ellipse } = require('scenegraph')
 const { Checkbox } = require('./ids-components.cjs')
-
-const componentData = {
-    name: 'Checkbox',
-    states: [ 'default', 'checked', 'disabled', 'checked-disabled' ],
-    root: {
-        name: 'Box',
-        type: Rectangle,
-        styles: {
-            default: {
-                width: 32,
-                height: 32,
-                strokeWidth: 1,
-                fill: '#ffffff',
-                stroke: '#767676',
-                cornerRadii: (node) => ({
-                    topLeft: 0.2 * node.width,
-                    topRight: 0.2 * node.width,
-                    bottomRight: 0.2 * node.width,
-                    bottomLeft: 0.2 * node.width,
-                }),
-            },
-            checked: {
-                fill: '#0277f6',
-                stroke: '#0277f6',
-            },
-            disabled: {
-                fill: '#f8f8f8',
-                stroke: '#d1d1d1',
-            },
-            'checked-disabled': {
-                fill: '#d1d1d1',
-                stroke: '#d1d1d1',
-            },
-        },
-        children: [
-            {
-                name: 'Icon',
-                type: Path,
-                styles: {
-                    default: {
-                        pathData: 'M20.3 2l-11.3 11.6-5.3-5-3.7 3.7 9 8.7 15-15.3z',
-                        width: 24,
-                        height: 24,
-                        fill: 'transparent',
-                        customize: (node, parentNode) => {
-                            const x = 0.5 * (parentNode.width - node.width)
-                            const y = 0.5 * (parentNode.height - node.height)
-                            node.moveInParentCoordinates(x, y)
-                        },
-                    },
-                    checked: {
-                        fill: '#ffffff',
-                    },
-                    'checked-disabled': {
-                        fill: '#ffffff',
-                    },
-                },
-                children: [],
-            }
-        ],
-    }
-}
+const { checkmark, checkbox, dot, radio, toggle, select, text, chevron } = require('./components')
+const cloneDeep = require('lodash.clonedeep')
 
 class HelloForm extends React.Component {
     constructor(props) {
@@ -73,7 +13,7 @@ class HelloForm extends React.Component {
             this.setState({ name: e.target.value })
         }
         this.onDoneClick = (e) => {
-            this.drawComponent(componentData)
+            this.drawComponent(select())
             props.dialog.close()
         }
     }
@@ -89,10 +29,10 @@ class HelloForm extends React.Component {
     styleNode (node, styles, parentNode) {
         for (const property in styles) {
             if (property === 'customize') {
-                node[property] = styles[property](node, parentNode)
+                styles[property](node, parentNode)
             }
             else if (typeof styles[property] === 'function') {
-                node[property] = styles[property](node)
+                node[property] = styles[property](node, parentNode)
             }
             else if (property === 'fill' || property === 'stroke') {
                 node[property] = new Color(styles[property])
@@ -104,31 +44,31 @@ class HelloForm extends React.Component {
     }
 
 	createGroup (nodes, groupName) {
-		this.props.selection.items = nodes
+		this.props.selection.items = nodes.filter((node) => node)
 		commands.group()
 		const [ group ] = this.props.selection.items
 		if (groupName) group.name = groupName
 		return group
 	}
 
-    createNode (nodeData, state, componentName, parentNode) {
-        console.log(nodeData, state, componentName, parentNode)
+    createNode (nodeData, state, rootComponentName, parentNode) {
 		const node = new nodeData.type()
 		node.name = nodeData.name
         const styles = Object.assign(
             {},
-            nodeData.styles.default,
-            nodeData.styles[state],
+            cloneDeep(nodeData.styles.default),
+            cloneDeep(nodeData.styles[state]),
         )
 		this.styleNode(node, styles, parentNode)
 		this.props.selection.insertionParent.addChild(node)
 		let childGroup
 		if ('children' in nodeData && nodeData.children.length > 0) {
-			childGroup = this.createGroup(nodeData.children.map((childNodeData) => 
-				this.createNode(childNodeData, state, null, node)
-			), 'children')
+			childGroup = this.createGroup(nodeData.children.map((childNodeData) => {
+                if ('root' in childNodeData) childNodeData = childNodeData.root
+				return this.createNode(childNodeData, state, null, node)
+            }), 'children')
 		}
-        if (componentName) return this.createGroup([node, childGroup], componentName)
+        if (rootComponentName) return this.createGroup([node, childGroup], rootComponentName)
         else return node
     }
 
@@ -141,8 +81,11 @@ class HelloForm extends React.Component {
                 state,
                 `${componentData.name}__${state}`
             )
-            console.log(rootNode)
-            rootNode.moveInParentCoordinates(50 * index, 0)
+            const { width = 50, height = 50 } = rootNode.localBounds
+            rootNode.moveInParentCoordinates(
+                (width * index) + (0.5 * width * (index + 1)),
+                0.5 * height
+            )
             index++
         }
     }
