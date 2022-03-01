@@ -1,7 +1,6 @@
 # Getting started
 
-This sample demonstrates how to use React to create a plugin for XD. The plugin receives user's inputs in a dialog and places the input(text) in the first artboard.
-[Read the step-by-step guide for this sample](https://adobexdplatform.com/plugin-docs/tutorials/quick-start-react/).
+This is an experiment to gauge the difficulty of rendering React components into Adobe XD using a custom scenegraph reconciler. For learning purposes only, do not try to use this in production.
 
 ## Development
 
@@ -27,5 +26,5 @@ yarn watch
 
 ## Usage
 
-1. Run "Plugins > Create Rectangle"
+1. Run "Plugins > Intouch Design System > Quickstart - JSX"
 
