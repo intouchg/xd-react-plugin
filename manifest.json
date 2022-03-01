@@ -20,9 +20,9 @@
   ],
   "uiEntryPoints": [
     {
-      "type": "menu",
-      "label": "Quickstart - React JSX",
-      "commandId": "main"
+      "type": "panel",
+      "label": "Components",
+      "panelId": "componentsPanel"
     }
   ]
 }

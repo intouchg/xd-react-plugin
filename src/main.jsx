@@ -1,26 +1,13 @@
-const reactShim = require("./react-shim");
-const React = require("react");
-const ReactDOM = require("react-dom");
-const App = require("./HelloForm.jsx")
+require('./react-shim')
+const React = require('react')
+const ReactDOM = require('react-dom')
+const ComponentsPanel = require('./ComponentsPanel.jsx')
+const PanelController = require('./controllers/PanelController')
 
-function main(selection) {
-    let dialog;
-
-    function getDialog() {
-        if (dialog == null) {
-            dialog = document.createElement("dialog");
-            ReactDOM.render(<App dialog={dialog} selection={selection} />, dialog);
-        }
-        return dialog
-    }
-
-    return document.body.appendChild(getDialog()).showModal().then(result => {
-        console.log("dialog closed")
-    })
-}
+const componentsPanel = new PanelController(ComponentsPanel)
 
 module.exports = {
-    commands: {
-        main
-    }
-};
+    panels: {
+        componentsPanel,
+    },
+}

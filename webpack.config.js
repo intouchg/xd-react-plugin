@@ -26,6 +26,7 @@ module.exports = {
     },
     externals: {
         scenegraph: "scenegraph",
-        commands: "commands"
+        commands: "commands",
+        application: "application"
     }
 };
