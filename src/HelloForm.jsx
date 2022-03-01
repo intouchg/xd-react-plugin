@@ -14,8 +14,8 @@ const componentData = {
                 width: 32,
                 height: 32,
                 strokeWidth: 1,
-                fill: new Color('#ffffff'),
-                stroke: new Color('#767676'),
+                fill: '#ffffff',
+                stroke: '#767676',
                 cornerRadii: (node) => ({
                     topLeft: 0.2 * node.width,
                     topRight: 0.2 * node.width,
@@ -24,16 +24,16 @@ const componentData = {
                 }),
             },
             checked: {
-                fill: new Color('#0277f6'),
-                stroke: new Color('#0277f6'),
+                fill: '#0277f6',
+                stroke: '#0277f6',
             },
             disabled: {
-                fill: new Color('#f8f8f8'),
-                stroke: new Color('#d1d1d1'),
+                fill: '#f8f8f8',
+                stroke: '#d1d1d1',
             },
             'checked-disabled': {
-                fill: new Color('#d1d1d1'),
-                stroke: new Color('#d1d1d1'),
+                fill: '#d1d1d1',
+                stroke: '#d1d1d1',
             },
         },
         children: [
@@ -45,7 +45,7 @@ const componentData = {
                         pathData: 'M20.3 2l-11.3 11.6-5.3-5-3.7 3.7 9 8.7 15-15.3z',
                         width: 24,
                         height: 24,
-                        fill: new Color(null, 0),
+                        fill: 'transparent',
                         customize: (node, parentNode) => {
                             const x = 0.5 * (parentNode.width - node.width)
                             const y = 0.5 * (parentNode.height - node.height)
@@ -53,10 +53,10 @@ const componentData = {
                         },
                     },
                     checked: {
-                        fill: new Color('#ffffff'),
+                        fill: '#ffffff',
                     },
                     'checked-disabled': {
-                        fill: new Color('#ffffff'),
+                        fill: '#ffffff',
                     },
                 },
                 children: [],
@@ -88,10 +88,18 @@ class HelloForm extends React.Component {
 
     styleNode (node, styles, parentNode) {
         for (const property in styles) {
-            if (property === 'customize') styles[property](node, parentNode)
-            else node[property] = typeof styles[property] === 'function' ?
-                styles[property](node)
-                : styles[property]
+            if (property === 'customize') {
+                node[property] = styles[property](node, parentNode)
+            }
+            else if (typeof styles[property] === 'function') {
+                node[property] = styles[property](node)
+            }
+            else if (property === 'fill' || property === 'stroke') {
+                node[property] = new Color(styles[property])
+            }
+            else {
+                node[property] = styles[property]
+            }
         }
     }
 
